@@ -31,8 +31,8 @@
     for (let start = 0; start < simulations; start += SIMULATION_CHUNK_SIZE) {
       const end = Math.min(simulations, start + SIMULATION_CHUNK_SIZE);
       for (let i = start; i < end; i += 1) {
-        remainingLots.fill(0);
         remainingLots.fill(1, 0, shortLots);
+        remainingLots.fill(0, shortLots);
         let remainingCount = participants;
 
         for (let person = 0; person < participants; person += 1) {
