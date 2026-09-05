@@ -1,0 +1,64 @@
+:root {
+  color-scheme: light dark;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  align-items: end;
+}
+
+label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+input,
+button {
+  font: inherit;
+  padding: 0.45rem 0.6rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+#error {
+  min-height: 1.4rem;
+  color: #d33;
+}
+
+#chart {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 90px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bar-track {
+  height: 1.2rem;
+  background: rgba(127, 127, 127, 0.25);
+}
+
+.bar-fill {
+  height: 100%;
+  background: #2f80ed;
+}

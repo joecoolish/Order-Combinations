@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Short Lot Order Probability Simulator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Short Lot Order Probability Simulator</h1>
+      <p>
+        Simulate whether draw order affects the chance of receiving a short lot.
+      </p>
+
+      <form id="simulation-form">
+        <label>
+          Total participants (Y)
+          <input id="participants" type="number" min="2" step="1" value="10" required />
+        </label>
+
+        <label>
+          Total short lots (X)
+          <input id="shortLots" type="number" min="1" step="1" value="1" required />
+        </label>
+
+        <label>
+          Total simulations
+          <input id="simulations" type="number" min="1" step="1" value="10000" required />
+        </label>
+
+        <button type="submit">Simulate</button>
+      </form>
+
+      <p id="error" role="alert"></p>
+
+      <section id="summary" aria-live="polite"></section>
+      <section id="chart" aria-label="Probability by draw position"></section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
