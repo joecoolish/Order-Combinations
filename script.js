@@ -6,9 +6,10 @@
   const chart = document.getElementById('chart');
   const summary = document.getElementById('summary');
   const error = document.getElementById('error');
-  const MAX_PARTICIPANTS = 10000;
+  const MAX_PARTICIPANTS = 2000;
   const MAX_SIMULATIONS = 1000000;
   const MAX_TOTAL_SHORT_LOT_DRAWS = 20000000;
+  const MAX_TOTAL_POSITION_EVALUATIONS = 50000000;
 
   function pickShortLotPositions(participants, shortLots) {
     const picked = new Set();
@@ -38,6 +39,7 @@
 
   function renderResults(probabilities, theoretical) {
     chart.innerHTML = '';
+    const fragment = document.createDocumentFragment();
 
     probabilities.forEach((probability, index) => {
       const row = document.createElement('div');
@@ -58,8 +60,9 @@
       label.textContent = toPercent(probability);
 
       row.append(position, track, label);
-      chart.appendChild(row);
+      fragment.appendChild(row);
     });
+    chart.appendChild(fragment);
 
     const first = probabilities[0];
     const last = probabilities[probabilities.length - 1];
@@ -114,6 +117,12 @@
     if (shortLots * simulations > MAX_TOTAL_SHORT_LOT_DRAWS) {
       clearOutput();
       error.textContent = `Input combination is too large to run in-browser. Keep short lots × simulations at or below ${MAX_TOTAL_SHORT_LOT_DRAWS.toLocaleString()}.`;
+      return;
+    }
+
+    if (participants * simulations > MAX_TOTAL_POSITION_EVALUATIONS) {
+      clearOutput();
+      error.textContent = `Input combination is too large to render in-browser. Keep participants × simulations at or below ${MAX_TOTAL_POSITION_EVALUATIONS.toLocaleString()}.`;
       return;
     }
 
