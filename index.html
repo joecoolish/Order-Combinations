@@ -12,6 +12,10 @@
       <p>
         Simulate whether draw order affects the chance of receiving a short lot.
       </p>
+      <p>
+        The simulation assigns lots one draw at a time from Position 1 onward, so draw order is
+        explicitly included in both the simulation and the results shown below.
+      </p>
 
       <form id="simulation-form">
         <label>
@@ -35,7 +39,8 @@
       <p id="error" role="alert"></p>
 
       <section id="summary" aria-live="polite"></section>
-      <section id="chart" aria-label="Probability by draw position"></section>
+      <h2 id="chart-heading">Probabilities grouped by draw order position</h2>
+      <section id="chart" aria-labelledby="chart-heading"></section>
     </main>
 
     <script src="script.js"></script>

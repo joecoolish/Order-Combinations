@@ -68,7 +68,7 @@
       row.className = 'bar-row';
 
       const position = document.createElement('span');
-      position.textContent = `Position ${index + 1}`;
+      position.textContent = `Draw position ${index + 1}`;
 
       const track = document.createElement('div');
       track.className = 'bar-track';
@@ -94,8 +94,8 @@
     );
     const convergenceNote =
       simulations < LOW_SIMULATION_THRESHOLD && maxDeviation > HIGH_DEVIATION_THRESHOLD
-        ? 'With a low simulation count, visible variation between positions is expected from randomness.'
-        : 'Across enough simulations, positions converge to the same probability, so order does not change the odds.';
+        ? 'The simulation measures each draw position in order, and with a low simulation count, visible variation between positions is expected from randomness.'
+        : 'The simulation measures each draw position in order. Across enough simulations, positions converge to the same probability, so order does not change the underlying odds.';
     summary.textContent = `Theoretical chance per position is ${toPercent(theoretical)}. ` +
       `First position: ${toPercent(first)}. Last position: ${toPercent(last)}. ` +
       convergenceNote;
