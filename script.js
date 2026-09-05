@@ -96,7 +96,7 @@
     const convergenceNote =
       simulations < LOW_SIMULATION_THRESHOLD && maxDeviation > HIGH_DEVIATION_THRESHOLD
         ? `${orderMeasuredPrefix}and with a low simulation count, visible variation between positions is expected from randomness.`
-        : `${orderMeasuredPrefix}across enough simulations, positions converge to the same probability, so order does not change the underlying odds.`;
+        : `${orderMeasuredPrefix}and across enough simulations, positions converge to the same probability, so order does not change the underlying odds.`;
     summary.textContent = `Theoretical chance per draw position is ${toPercent(theoretical)}. ` +
       `First position: ${toPercent(first)}. Last position: ${toPercent(last)}. ` +
       convergenceNote;
