@@ -6,10 +6,13 @@
   const chart = document.getElementById('chart');
   const summary = document.getElementById('summary');
   const error = document.getElementById('error');
+  const submitButton = form.querySelector('button[type="submit"]');
   const MAX_PARTICIPANTS = 2000;
   const MAX_SIMULATIONS = 1000000;
   const MAX_TOTAL_SHORT_LOT_DRAWS = 20000000;
-  const MAX_TOTAL_POSITION_EVALUATIONS = 50000000;
+  const LOW_SIMULATION_THRESHOLD = 1000;
+  const HIGH_DEVIATION_THRESHOLD = 0.02;
+  const SIMULATION_CHUNK_SIZE = 10000;
 
   function pickShortLotPositions(participants, shortLots) {
     // Floyd's algorithm: uniformly sample shortLots unique positions in O(shortLots).
@@ -21,14 +24,32 @@
     return picked;
   }
 
-  function runSimulation(participants, shortLots, simulations) {
+  function nextFrame() {
+    return new Promise((resolve) => {
+      if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => resolve());
+        return;
+      }
+      setTimeout(resolve, 0);
+    });
+  }
+
+  async function runSimulation(participants, shortLots, simulations, onProgress) {
     const shortLotCounts = new Array(participants).fill(0);
 
-    for (let i = 0; i < simulations; i += 1) {
-      const shortLotPositions = pickShortLotPositions(participants, shortLots);
-      shortLotPositions.forEach((position) => {
-        shortLotCounts[position] += 1;
-      });
+    for (let start = 0; start < simulations; start += SIMULATION_CHUNK_SIZE) {
+      const end = Math.min(simulations, start + SIMULATION_CHUNK_SIZE);
+      for (let i = start; i < end; i += 1) {
+        const shortLotPositions = pickShortLotPositions(participants, shortLots);
+        shortLotPositions.forEach((position) => {
+          shortLotCounts[position] += 1;
+        });
+      }
+      onProgress(end, simulations);
+      if (end < simulations) {
+        // Yield so the browser can repaint while simulation is running.
+        await nextFrame();
+      }
     }
 
     return shortLotCounts.map((count) => count / simulations);
@@ -72,7 +93,7 @@
       0
     );
     const convergenceNote =
-      simulations < 1000 && maxDeviation > 0.02
+      simulations < LOW_SIMULATION_THRESHOLD && maxDeviation > HIGH_DEVIATION_THRESHOLD
         ? 'With a low simulation count, visible variation between positions is expected from randomness.'
         : 'Across enough simulations, positions converge to the same probability, so order does not change the odds.';
     summary.textContent = `Theoretical chance per position is ${toPercent(theoretical)}. ` +
@@ -93,9 +114,6 @@
     }
     const max = participants - 1;
     shortLotsInput.max = String(max);
-    if (Number(shortLotsInput.value) > max) {
-      shortLotsInput.value = String(max);
-    }
   }
 
   participantsInput.addEventListener('input', updateShortLotsMax);
@@ -103,7 +121,7 @@
   simulationsInput.max = String(MAX_SIMULATIONS);
   updateShortLotsMax();
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     error.textContent = '';
 
@@ -135,13 +153,17 @@
       return;
     }
 
-    if (participants * simulations > MAX_TOTAL_POSITION_EVALUATIONS) {
-      clearOutput();
-      error.textContent = `Input combination is too large to compute in-browser. Keep participants × simulations at or below ${MAX_TOTAL_POSITION_EVALUATIONS.toLocaleString()}.`;
-      return;
-    }
+    submitButton.disabled = true;
+    summary.textContent = 'Running simulation... 0%';
+    chart.innerHTML = '';
 
-    const probabilities = runSimulation(participants, shortLots, simulations);
-    renderResults(probabilities, shortLots / participants, simulations);
+    try {
+      const probabilities = await runSimulation(participants, shortLots, simulations, (completed, total) => {
+        summary.textContent = `Running simulation... ${((completed / total) * 100).toFixed(0)}%`;
+      });
+      renderResults(probabilities, shortLots / participants, simulations);
+    } finally {
+      submitButton.disabled = false;
+    }
   });
 })();
