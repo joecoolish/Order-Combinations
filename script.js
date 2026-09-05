@@ -9,20 +9,10 @@
   const submitButton = form.querySelector('button[type="submit"]');
   const MAX_PARTICIPANTS = 2000;
   const MAX_SIMULATIONS = 1000000;
-  const MAX_TOTAL_SHORT_LOT_DRAWS = 20000000;
+  const MAX_TOTAL_PARTICIPANT_DRAWS = 20000000;
   const LOW_SIMULATION_THRESHOLD = 1000;
   const HIGH_DEVIATION_THRESHOLD = 0.02;
   const SIMULATION_CHUNK_SIZE = 10000;
-
-  function pickShortLotPositions(participants, shortLots) {
-    // Floyd's algorithm: uniformly sample shortLots unique positions in O(shortLots).
-    const picked = new Set();
-    for (let index = participants - shortLots; index < participants; index += 1) {
-      const candidate = Math.floor(Math.random() * (index + 1));
-      picked.add(picked.has(candidate) ? index : candidate);
-    }
-    return picked;
-  }
 
   function nextFrame() {
     return new Promise((resolve) => {
@@ -40,10 +30,17 @@
     for (let start = 0; start < simulations; start += SIMULATION_CHUNK_SIZE) {
       const end = Math.min(simulations, start + SIMULATION_CHUNK_SIZE);
       for (let i = start; i < end; i += 1) {
-        const shortLotPositions = pickShortLotPositions(participants, shortLots);
-        shortLotPositions.forEach((position) => {
-          shortLotCounts[position] += 1;
-        });
+        const remainingLots = new Array(participants)
+          .fill(false)
+          .fill(true, 0, shortLots);
+
+        for (let person = 0; person < participants; person += 1) {
+          const lotIndex = Math.floor(Math.random() * remainingLots.length);
+          const [pickedShortLot] = remainingLots.splice(lotIndex, 1);
+          if (pickedShortLot) {
+            shortLotCounts[person] += 1;
+          }
+        }
       }
       onProgress(end, simulations);
       if (end < simulations) {
@@ -147,9 +144,9 @@
       return;
     }
 
-    if (shortLots * simulations > MAX_TOTAL_SHORT_LOT_DRAWS) {
+    if (participants * simulations > MAX_TOTAL_PARTICIPANT_DRAWS) {
       clearOutput();
-      error.textContent = `Input combination is too large to run in-browser. Keep short lots × simulations at or below ${MAX_TOTAL_SHORT_LOT_DRAWS.toLocaleString()}.`;
+      error.textContent = `Input combination is too large to run in-browser. Keep participants × simulations at or below ${MAX_TOTAL_PARTICIPANT_DRAWS.toLocaleString()}.`;
       return;
     }
 
