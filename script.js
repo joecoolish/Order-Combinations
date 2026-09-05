@@ -33,10 +33,13 @@
         const remainingLots = new Array(participants)
           .fill(false)
           .fill(true, 0, shortLots);
+        let remainingCount = participants;
 
         for (let person = 0; person < participants; person += 1) {
-          const lotIndex = Math.floor(Math.random() * remainingLots.length);
-          const [pickedShortLot] = remainingLots.splice(lotIndex, 1);
+          const lotIndex = Math.floor(Math.random() * remainingCount);
+          const pickedShortLot = remainingLots[lotIndex];
+          remainingCount -= 1;
+          remainingLots[lotIndex] = remainingLots[remainingCount];
           if (pickedShortLot) {
             shortLotCounts[person] += 1;
           }
