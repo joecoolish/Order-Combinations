@@ -12,6 +12,7 @@
   const MAX_TOTAL_POSITION_EVALUATIONS = 50000000;
 
   function pickShortLotPositions(participants, shortLots) {
+    // Floyd's algorithm: uniformly sample shortLots unique positions in O(shortLots).
     const picked = new Set();
     for (let index = participants - shortLots; index < participants; index += 1) {
       const candidate = Math.floor(Math.random() * (index + 1));
@@ -78,7 +79,11 @@
 
   function updateShortLotsMax() {
     const participants = Number(participantsInput.value);
-    const max = Number.isInteger(participants) && participants > 1 ? participants - 1 : 1;
+    if (!Number.isInteger(participants) || participants < 2) {
+      shortLotsInput.removeAttribute('max');
+      return;
+    }
+    const max = participants - 1;
     shortLotsInput.max = String(max);
     if (Number(shortLotsInput.value) > max) {
       shortLotsInput.value = String(max);
