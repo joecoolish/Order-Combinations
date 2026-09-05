@@ -38,7 +38,7 @@
     return `${(probability * 100).toFixed(2)}%`;
   }
 
-  function renderResults(probabilities, theoretical) {
+  function renderResults(probabilities, theoretical, simulations) {
     chart.innerHTML = '';
     const fragment = document.createDocumentFragment();
 
@@ -67,9 +67,17 @@
 
     const first = probabilities[0];
     const last = probabilities[probabilities.length - 1];
+    const maxDeviation = probabilities.reduce(
+      (largest, probability) => Math.max(largest, Math.abs(probability - theoretical)),
+      0
+    );
+    const convergenceNote =
+      simulations < 1000 && maxDeviation > 0.02
+        ? 'With a low simulation count, visible variation between positions is expected from randomness.'
+        : 'Across enough simulations, positions converge to the same probability, so order does not change the odds.';
     summary.textContent = `Theoretical chance per position is ${toPercent(theoretical)}. ` +
       `First position: ${toPercent(first)}. Last position: ${toPercent(last)}. ` +
-      'Across enough simulations, positions converge to the same probability, so order does not change the odds.';
+      convergenceNote;
   }
 
   function clearOutput() {
@@ -91,6 +99,8 @@
   }
 
   participantsInput.addEventListener('input', updateShortLotsMax);
+  participantsInput.max = String(MAX_PARTICIPANTS);
+  simulationsInput.max = String(MAX_SIMULATIONS);
   updateShortLotsMax();
 
   form.addEventListener('submit', (event) => {
@@ -127,11 +137,11 @@
 
     if (participants * simulations > MAX_TOTAL_POSITION_EVALUATIONS) {
       clearOutput();
-      error.textContent = `Input combination is too large to render in-browser. Keep participants × simulations at or below ${MAX_TOTAL_POSITION_EVALUATIONS.toLocaleString()}.`;
+      error.textContent = `Input combination is too large to compute in-browser. Keep participants × simulations at or below ${MAX_TOTAL_POSITION_EVALUATIONS.toLocaleString()}.`;
       return;
     }
 
     const probabilities = runSimulation(participants, shortLots, simulations);
-    renderResults(probabilities, shortLots / participants);
+    renderResults(probabilities, shortLots / participants, simulations);
   });
 })();
