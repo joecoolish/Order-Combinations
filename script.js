@@ -26,18 +26,18 @@
 
   async function runSimulation(participants, shortLots, simulations, onProgress) {
     const shortLotCounts = new Array(participants).fill(0);
+    const remainingLots = new Uint8Array(participants);
 
     for (let start = 0; start < simulations; start += SIMULATION_CHUNK_SIZE) {
       const end = Math.min(simulations, start + SIMULATION_CHUNK_SIZE);
       for (let i = start; i < end; i += 1) {
-        const remainingLots = new Array(participants)
-          .fill(false)
-          .fill(true, 0, shortLots);
+        remainingLots.fill(0);
+        remainingLots.fill(1, 0, shortLots);
         let remainingCount = participants;
 
         for (let person = 0; person < participants; person += 1) {
           const lotIndex = Math.floor(Math.random() * remainingCount);
-          const pickedShortLot = remainingLots[lotIndex];
+          const pickedShortLot = remainingLots[lotIndex] === 1;
           remainingCount -= 1;
           remainingLots[lotIndex] = remainingLots[remainingCount];
           if (pickedShortLot) {
