@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -28,10 +28,11 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Prepare Pages artifact
         run: |
+          mkdir -p /tmp/pages-site
           rsync -av --delete \
             --exclude '.git/' \
             --exclude '.github/' \
-            . /tmp/pages-site
+            ./ /tmp/pages-site
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
