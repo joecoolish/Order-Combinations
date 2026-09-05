@@ -13,4 +13,4 @@ A small GitHub Pages-ready web app that simulates short-lot draws.
 
 ## Run locally
 
-Open `/home/runner/work/Order-Combinations/Order-Combinations/index.html` in a browser.
+Open `index.html` in a browser.

@@ -6,11 +6,15 @@
   const chart = document.getElementById('chart');
   const summary = document.getElementById('summary');
   const error = document.getElementById('error');
+  const MAX_PARTICIPANTS = 10000;
+  const MAX_SIMULATIONS = 1000000;
+  const MAX_TOTAL_SHORT_LOT_DRAWS = 20000000;
 
   function pickShortLotPositions(participants, shortLots) {
     const picked = new Set();
-    while (picked.size < shortLots) {
-      picked.add(Math.floor(Math.random() * participants));
+    for (let index = participants - shortLots; index < participants; index += 1) {
+      const candidate = Math.floor(Math.random() * (index + 1));
+      picked.add(picked.has(candidate) ? index : candidate);
     }
     return picked;
   }
@@ -69,6 +73,18 @@
     chart.innerHTML = '';
   }
 
+  function updateShortLotsMax() {
+    const participants = Number(participantsInput.value);
+    const max = Number.isInteger(participants) && participants > 1 ? participants - 1 : 1;
+    shortLotsInput.max = String(max);
+    if (Number(shortLotsInput.value) > max) {
+      shortLotsInput.value = String(max);
+    }
+  }
+
+  participantsInput.addEventListener('input', updateShortLotsMax);
+  updateShortLotsMax();
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     error.textContent = '';
@@ -77,9 +93,9 @@
     const shortLots = Number(shortLotsInput.value);
     const simulations = Number(simulationsInput.value);
 
-    if (!Number.isInteger(participants) || participants < 2) {
+    if (!Number.isInteger(participants) || participants < 2 || participants > MAX_PARTICIPANTS) {
       clearOutput();
-      error.textContent = 'Total participants must be an integer of 2 or more.';
+      error.textContent = `Total participants must be an integer from 2 to ${MAX_PARTICIPANTS}.`;
       return;
     }
 
@@ -89,9 +105,15 @@
       return;
     }
 
-    if (!Number.isInteger(simulations) || simulations < 1) {
+    if (!Number.isInteger(simulations) || simulations < 1 || simulations > MAX_SIMULATIONS) {
       clearOutput();
-      error.textContent = 'Total simulations must be an integer of 1 or more.';
+      error.textContent = `Total simulations must be an integer from 1 to ${MAX_SIMULATIONS}.`;
+      return;
+    }
+
+    if (shortLots * simulations > MAX_TOTAL_SHORT_LOT_DRAWS) {
+      clearOutput();
+      error.textContent = `Input combination is too large to run in-browser. Keep short lots × simulations at or below ${MAX_TOTAL_SHORT_LOT_DRAWS.toLocaleString()}.`;
       return;
     }
 
