@@ -70,7 +70,7 @@ input {
 /* --color-text is used for the focus outline (rather than the teal accent)
    because it maintains at least a 3:1 contrast ratio against both the page
    background and the orange button background, keeping focus clearly visible. */
-input:focus,
+input:focus-visible,
 button:focus-visible {
   outline: 2px solid var(--color-text);
   outline-offset: 1px;
