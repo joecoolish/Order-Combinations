@@ -15,6 +15,7 @@
   --color-accent-strong: #00997a;
   --color-primary: #ff9f43;
   --color-primary-strong: #f7871f;
+  --color-button-text: #2f3542;
   --color-border: #ffd8a8;
   --color-error: #e63946;
   --color-track: #eef2ff;
@@ -71,21 +72,23 @@ input {
   color: var(--color-text);
 }
 
-/* --color-text is used for the focus outline (rather than the teal accent)
-   because it maintains at least a 3:1 contrast ratio against both the page
-   background and the orange button background, keeping focus clearly visible. */
+/* A dark focus outline (rather than the teal accent) is used here because it
+   maintains ~6:1 contrast against the orange button and ~11:1 against the
+   page background, comfortably clearing the 3:1 minimum for focus indicators. */
 input:focus-visible,
 button:focus-visible {
   outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
-/* Dark text on the orange button backgrounds gives contrast ratios of ~6.0:1
-   (default) and ~4.9:1 (hover), both passing WCAG AA's 4.5:1 minimum. */
+/* --color-button-text (dark slate) on the orange button backgrounds gives
+   contrast ratios of ~6.0:1 (default) and ~4.9:1 (hover), both passing
+   WCAG AA's 4.5:1 minimum. It is a distinct token from --color-text so the
+   two contexts (body text vs. button label) can diverge independently. */
 button {
   cursor: pointer;
   background: var(--color-primary);
-  color: var(--color-text);
+  color: var(--color-button-text);
   border-color: var(--color-primary-strong);
   font-weight: bold;
   transition: background-color 0.15s ease-in-out;
