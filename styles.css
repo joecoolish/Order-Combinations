@@ -1,4 +1,8 @@
 :root {
+  /* This theme intentionally defines a single bright, cheerful light palette
+     with no dark-mode variant, so color-scheme is restricted to "light"
+     (rather than "light dark") to keep native form controls consistent with
+     the fixed light colors below. */
   color-scheme: light;
   font-family: Arial, sans-serif;
 
