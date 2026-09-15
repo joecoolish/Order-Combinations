@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   font-family: Arial, sans-serif;
 
   --color-bg-start: #fff6e5;
@@ -76,7 +76,7 @@ button:focus-visible {
 button {
   cursor: pointer;
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-text);
   border-color: var(--color-primary-strong);
   font-weight: bold;
   transition: background-color 0.15s ease-in-out;
